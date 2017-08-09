@@ -1,0 +1,6 @@
+
+*.plist
+
+src/ass.dSYM/Contents/Resources/DWARF/ass
+
+src/ass
