@@ -6,14 +6,15 @@
 
 typedef unsigned int natural;
 typedef unsigned long long entero_largo_sin_signo;
+typedef long long entero_largo;
 
 typedef struct puto_cardinal {
 	union {
 		struct {
-			int coordenada_x_puto_cardinal;
 			int coordenada_y_puto_cardinal;
+			int coordenada_x_puto_cardinal;
 		} separados_puto_cardinal;
-		entero_largo_sin_signo coordenadas_juntas_puto_cardinal;
+		entero_largo coordenadas_juntas_puto_cardinal;
 	} datos_puto_cardinal;
 } puto_cardinal;
 
@@ -45,17 +46,47 @@ static inline void ass_puto_cartesiano_a_polar(puto_cardinal *pc1,
 }
 
 static inline int ass_comparar_puto_polar(puto_polar *ppa, puto_polar *ppb) {
-	if (ppa->anogulo_puto_polar == ppb->anogulo_puto_polar) {
-		return ppa->distancia_puto_polar - ppb->distancia_puto_polar;
+	int resul = 0;
+	if (ppa->anogulo_puto_polar < ppb->anogulo_puto_polar) {
+		resul = -1;
+	} else {
+		if (ppa->anogulo_puto_polar > ppb->anogulo_puto_polar) {
+			resul = 1;
+		} else {
+			if (ppa->distancia_puto_polar < ppb->distancia_puto_polar) {
+				resul = -1;
+			} else {
+				if (ppa->distancia_puto_polar > ppb->distancia_puto_polar) {
+					resul = 1;
+				} else {
+					resul = 0;
+				}
+			}
+		}
 	}
-	return ppa->anogulo_puto_polar - ppb->anogulo_puto_polar;
+	return resul;
 }
 
 static inline int ass_comparar_puto_polar_dist(puto_polar *ppa, puto_polar *ppb) {
-	if (ppa->distancia_puto_polar == ppb->distancia_puto_polar) {
-		return ppa->anogulo_puto_polar - ppb->anogulo_puto_polar;
+	int resul = 0;
+	if (ppa->distancia_puto_polar < ppb->distancia_puto_polar) {
+		resul = -1;
+	} else {
+		if (ppa->distancia_puto_polar > ppb->distancia_puto_polar) {
+			resul = 1;
+		} else {
+			if (ppa->anogulo_puto_polar < ppb->anogulo_puto_polar) {
+				resul = -1;
+			} else {
+				if (ppa->anogulo_puto_polar > ppb->anogulo_puto_polar) {
+					resul = 1;
+				} else {
+					resul = 0;
+				}
+			}
+		}
 	}
-	return ppa->distancia_puto_polar - ppb->distancia_puto_polar;
+	return resul;
 }
 
 int ass_comparar_puto_polar_qsort(const void *a, const void *b) {
@@ -63,10 +94,25 @@ int ass_comparar_puto_polar_qsort(const void *a, const void *b) {
 }
 
 static inline int ass_comparar_puto_polar_inv(puto_polar *ppa, puto_polar *ppb) {
-	if (ppa->anogulo_puto_polar == ppb->anogulo_puto_polar) {
-		return (ppa->distancia_puto_polar - ppb->distancia_puto_polar) * -1;
+	int resul = 0;
+	if (ppa->anogulo_puto_polar < ppb->anogulo_puto_polar) {
+		resul = -1;
+	} else {
+		if (ppa->anogulo_puto_polar > ppb->anogulo_puto_polar) {
+			resul = 1;
+		} else {
+			if (ppa->distancia_puto_polar > ppb->distancia_puto_polar) {
+				resul = -1;
+			} else {
+				if (ppa->distancia_puto_polar < ppb->distancia_puto_polar) {
+					resul = 1;
+				} else {
+					resul = 0;
+				}
+			}
+		}
 	}
-	return ppa->anogulo_puto_polar - ppb->anogulo_puto_polar;
+	return resul;
 }
 
 int ass_comparar_puto_polar_inv_qsort(const void *a, const void *b) {
@@ -84,6 +130,7 @@ static inline void ass_main() {
 		puto_cardinal *min_card = MIN_COORD_CARD;
 		puto_polar max_pol = *MAX_COORD_POLAR;
 		scanf("%u\n", &num_coor);
+//		printf("num caca %u\n", num_coor);
 
 		for (natural i = 0; i < num_coor; i++) {
 			int coord_x_in = 0;
@@ -96,7 +143,17 @@ static inline void ass_main() {
 				puto_cardinal *cur_puto = coordenadas_cartesianas + cont_coor++;
 				cur_puto->coord_x = coord_x_in;
 				cur_puto->coord_y = coord_y_in;
-				if (cur_puto->coord_xy < min_card->coord_xy) {
+				/*
+				 printf("x %d(%x) y %d(%x) x-y %lld (%llx)\n", cur_puto->coord_x,
+				 cur_puto->coord_x, cur_puto->coord_y, cur_puto->coord_y,
+				 cur_puto->coord_xy, cur_puto->coord_xy);
+				 */
+//				if (cur_puto->coord_xy < min_card->coord_xy) {
+//				if (ass_comparar_puto_cardinal(min_card, cur_puto) < 0) {
+				if ((min_card->coord_x > cur_puto->coord_x)
+						|| (min_card->coord_x == cur_puto->coord_x
+								&& min_card->coord_y > cur_puto->coord_y)) {
+//					printf("minimo\n");
 					min_card = cur_puto;
 				}
 			}
@@ -107,6 +164,10 @@ static inline void ass_main() {
 			puto_polar *cur_puto_pol = coordenadas_polares + i;
 
 			ass_puto_cartesiano_a_polar(min_card, cur_puto, cur_puto_pol);
+			/*
+			 printf("ano %f dist %f\n", cur_puto_pol->anogulo_puto_polar,
+			 cur_puto_pol->distancia_puto_polar);
+			 */
 			if (ass_comparar_puto_polar_dist(&max_pol, cur_puto_pol) <= 0) {
 				max_pol = *cur_puto_pol;
 			}
@@ -118,22 +179,32 @@ static inline void ass_main() {
 		natural idx_max_pol = -1;
 		for (natural i = 0; i < cont_coor; i++) {
 			puto_polar *cur_puto_pol = coordenadas_polares + i;
+			/*
+			 printf("%p ano1 %f dist %f\n", cur_puto_pol,
+			 cur_puto_pol->anogulo_puto_polar,
+			 cur_puto_pol->distancia_puto_polar);
+			 */
 			if (cur_puto_pol->cardinal_puto_polar
 					== max_pol.cardinal_puto_polar) {
 				idx_max_pol = i;
-				break;
 			}
 		}
 		assert(idx_max_pol != -1);
 		if (idx_max_pol + 1 < cont_coor) {
-			qsort(coordenadas_polares + idx_max_pol + 1, cont_coor,
-					sizeof(puto_polar), ass_comparar_puto_polar_inv_qsort);
+			qsort(coordenadas_polares + idx_max_pol + 1,
+					cont_coor - idx_max_pol - 1, sizeof(puto_polar),
+					ass_comparar_puto_polar_inv_qsort);
 		}
 
+		printf("%u\n", cont_coor);
+		printf("%d %d\n", min_card->coord_x, min_card->coord_y);
 		for (natural i = 0; i < cont_coor; i++) {
 			puto_polar *cur_puto_pol = coordenadas_polares + i;
 			puto_cardinal *cur_puto = cur_puto_pol->cardinal_puto_polar;
-			printf("%d %d\n", cur_puto->coord_x, cur_puto->coord_y);
+//			printf("%p\n", cur_puto_pol);
+			if (cur_puto != min_card) {
+				printf("%d %d\n", cur_puto->coord_x, cur_puto->coord_y);
+			}
 		}
 	}
 }
