@@ -148,7 +148,6 @@ static char ass_puto_dentro(puto_cardinal *puto, puto_cardinal *segmento_inicio,
 
 	angulo_puto = angulo_puto < 0 ? (M_PI * 2) + angulo_puto : angulo_puto;
 	angulo = angulo < 0 ? (M_PI * 2) + angulo : angulo;
-
 	/*
 	 printf("angulo puto orig %f\n", angulo_puto * 180 / M_PI);
 	 */
@@ -156,7 +155,7 @@ static char ass_puto_dentro(puto_cardinal *puto, puto_cardinal *segmento_inicio,
 	angulo_puto =
 			angulo_puto > (M_PI * 2) ? angulo_puto - (M_PI * 2) : angulo_puto;
 
-	result = !(angulo_puto > 0.0 && angulo_puto < M_PI);
+	result = !(angulo_puto >= 0.0 && angulo_puto <= M_PI);
 	/*
 	 printf(
 	 "el anogulo %f (%d %d - %d %d) y el angulo puto %f (%d %d - %d %d)\n",
@@ -190,11 +189,9 @@ static void ass_main() {
 			int coord_y_in = 0;
 			char caca = 0;
 
-//			scanf("%d %d %c\n", &coord_x_in, &coord_y_in, &caca);
-			scanf("%d %d\n", &coord_x_in, &coord_y_in);
+			scanf("%d %d %c\n", &coord_x_in, &coord_y_in, &caca);
 
-			//	if (caca == 'Y')
-			{
+			if (caca == 'Y') {
 				puto_cardinal *cur_puto = coordenadas_cartesianas + cont_coor++;
 				cur_puto->coord_x = coord_x_in;
 				cur_puto->coord_y = coord_y_in;
@@ -257,29 +254,34 @@ static void ass_main() {
 		puto_polar_tmp = coordenadas_polares + cont_coor;
 		puto_polar_tmp->cardinal_puto_polar = min_card;
 
-		coordenadas_cartesianas_filtradas[0] = min_card;
-		for (i = 1; i < 3; i++) {
-			coordenadas_cartesianas_filtradas[i] =
-					(coordenadas_polares + i - 1)->cardinal_puto_polar;
-			/*
-			 printf("puta madre %d %d\n",
-			 coordenadas_cartesianas_filtradas[i]->coord_x,
-			 coordenadas_cartesianas_filtradas[i]->coord_y);
-			 */
+		i = 0;
+		coordenadas_cartesianas_filtradas[coord_filtradas_tam] = min_card;
+		coord_filtradas_tam = 1;
+		while (coord_filtradas_tam < 3 && i < cont_coor) {
+			if ((coordenadas_polares + i)->cardinal_puto_polar != min_card) {
+				coordenadas_cartesianas_filtradas[coord_filtradas_tam] =
+						(coordenadas_polares + i)->cardinal_puto_polar;
+				/*
+				 printf("puta madre %u %d %d de %u\n", coord_filtradas_tam,
+				 coordenadas_cartesianas_filtradas[coord_filtradas_tam]->coord_x,
+				 coordenadas_cartesianas_filtradas[coord_filtradas_tam]->coord_y,
+				 i);
+				 */
+				coord_filtradas_tam++;
+			}
+			i++;
 		}
 
-		coord_filtradas_tam = 3;
-
-		for (i = 3; i <= cont_coor + 1; i++) {
+		for (; i <= cont_coor; i++) {
 			puto_cardinal *segmento_fin = NULL;
 
-			segmento_fin = (coordenadas_polares + i - 1)->cardinal_puto_polar;
+			segmento_fin = (coordenadas_polares + i)->cardinal_puto_polar;
 			/*
 			 printf("mierda %u %d %d\n", i, segmento_fin->coord_x,
 			 segmento_fin->coord_y);
 			 printf("puta madre, el ano actual %f dist %f\n",
-			 (coordenadas_polares + i - 1)->anogulo_puto_polar,
-			 (coordenadas_polares + i - 1)->distancia_puto_polar);
+			 (coordenadas_polares + i)->anogulo_puto_polar,
+			 (coordenadas_polares + i)->distancia_puto_polar);
 			 */
 			while (coord_filtradas_tam > 2) {
 				puto_cardinal *segmento_ini = NULL;
@@ -306,12 +308,12 @@ static void ass_main() {
 				coord_filtradas_tam--;
 			}
 
-			if (i < cont_coor + i) {
+			if (i < cont_coor && segmento_fin != min_card) {
 				coordenadas_cartesianas_filtradas[coord_filtradas_tam++] =
 						segmento_fin;
 			}
 
-			if (i - 1 >= idx_max_pol) {
+			if (i >= idx_max_pol) {
 				/*
 				 assert(
 				 segmento_fin
@@ -322,12 +324,10 @@ static void ass_main() {
 			}
 		}
 
-//		printf("%u\n", coord_filtradas_tam);
-		printf("Case #%u\n", k + 1);
-		printf("%d %d\n", min_card->coord_x, min_card->coord_y);
+		printf("%u\n", coord_filtradas_tam);
 		for (i = 0; i < coord_filtradas_tam; i++) {
 			puto_cardinal *cur_puto = coordenadas_cartesianas_filtradas[i];
-			if (cur_puto != min_card) {
+			{
 				printf("%d %d\n", cur_puto->coord_x, cur_puto->coord_y);
 			}
 		}
