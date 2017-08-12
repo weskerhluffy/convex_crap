@@ -137,8 +137,8 @@ static char ass_puto_dentro(puto_cardinal *puto, puto_cardinal *segmento_inicio,
 			puto->coord_x - segmento_inicio->coord_x);
 
 	/*
-	printf("el anogulo %f y el angulo puto %f\n", angulo, angulo_puto);
-	*/
+	 printf("el anogulo %f y el angulo puto %f\n", angulo, angulo_puto);
+	 */
 	result = angulo_puto > angulo;
 
 	return result;
@@ -219,6 +219,7 @@ static void ass_main() {
 			qsort(coordenadas_polares + idx_max_pol, cont_coor - idx_max_pol,
 					sizeof(puto_polar), ass_comparar_puto_polar_inv_qsort);
 		}
+
 		/*
 		 printf("el mas lejano %d %d\n",
 		 (coordenadas_polares + idx_max_pol)->cardinal_puto_polar->coord_x,
@@ -233,10 +234,10 @@ static void ass_main() {
 			coordenadas_cartesianas_filtradas[i] =
 					(coordenadas_polares + i - 1)->cardinal_puto_polar;
 			/*
-			printf("puta madre %d %d\n",
-					coordenadas_cartesianas_filtradas[i]->coord_x,
-					coordenadas_cartesianas_filtradas[i]->coord_y);
-					*/
+			 printf("puta madre %d %d\n",
+			 coordenadas_cartesianas_filtradas[i]->coord_x,
+			 coordenadas_cartesianas_filtradas[i]->coord_y);
+			 */
 		}
 
 		coord_filtradas_tam = 3;
@@ -246,9 +247,9 @@ static void ass_main() {
 
 			segmento_fin = (coordenadas_polares + i - 1)->cardinal_puto_polar;
 			/*
-			printf("mierda %u %d %d\n", i, segmento_fin->coord_x,
-					segmento_fin->coord_y);
-					*/
+			 printf("mierda %u %d %d\n", i, segmento_fin->coord_x,
+			 segmento_fin->coord_y);
+			 */
 			while (coord_filtradas_tam > 2) {
 				puto_cardinal *segmento_ini = NULL;
 				puto_cardinal *puto = NULL;
@@ -277,14 +278,14 @@ static void ass_main() {
 			coordenadas_cartesianas_filtradas[coord_filtradas_tam++] =
 					segmento_fin;
 
-			if (i >= idx_max_pol) {
+			if (i - 1 >= idx_max_pol) {
 				/*
 				 assert(
 				 segmento_fin
 				 == (coordenadas_polares + idx_max_pol)->cardinal_puto_polar);
 				 */
 //				printf("no mas eliminacion\n");
-//				break;
+				break;
 			}
 		}
 
