@@ -1,5 +1,6 @@
 /**
  * https://www.hackerrank.com/contests/justins-test-contest/challenges/convex-hull-1/problem
+ * https://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=622
  */
 #include<stdio.h>
 #include<stdlib.h>
@@ -41,13 +42,17 @@ puto_cardinal coordenadas_cartesianas[ASS_MAX_PUTOS] = { 0 };
 puto_polar coordenadas_polares[ASS_MAX_PUTOS + 1] = { 0 };
 puto_cardinal *coordenadas_cartesianas_filtradas[ASS_MAX_PUTOS] = { 0 };
 
-puto_cardinal *MIN_COORD_CARD = &(puto_cardinal ) { .coord_xy = LONG_MAX };
+puto_cardinal *MIN_COORD_CARD = &(puto_cardinal ) { .coord_x = INT_MAX,
+				.coord_y = INT_MAX };
 puto_polar *MAX_COORD_POLAR = &(puto_polar ) { .distancia_puto_polar = 0 };
 
 static void ass_puto_cartesiano_a_polar(puto_cardinal *pc1, puto_cardinal *pc2,
 		puto_polar *pp) {
 	float dif_x = pc2->coord_x - pc1->coord_x;
 	float dif_y = pc2->coord_y - pc1->coord_y;
+	/*
+	 printf("q mierda pasa %f %d %d\n", dif_x, pc2->coord_x, pc1->coord_x);
+	 */
 	pp->distancia_puto_polar = sqrt(dif_x * dif_x + dif_y * dif_y);
 	pp->anogulo_puto_polar = atan2(dif_y, dif_x);
 	pp->cardinal_puto_polar = pc2;
@@ -55,8 +60,7 @@ static void ass_puto_cartesiano_a_polar(puto_cardinal *pc1, puto_cardinal *pc2,
 	 printf("convertido %d %d a polar %f %f\n", pc2->coord_x, pc2->coord_y,
 	 pp->anogulo_puto_polar, pp->distancia_puto_polar);
 	 printf("convertido %f %f a polar %f %f\n", dif_x, dif_y,
-	 (pp->anogulo_puto_polar * 180) / 3.14159265,
-	 pp->distancia_puto_polar);
+	 (pp->anogulo_puto_polar * 180) / M_PI, pp->distancia_puto_polar);
 	 */
 }
 
@@ -135,7 +139,7 @@ int ass_comparar_puto_polar_inv_qsort(const void *a, const void *b) {
 }
 
 static char ass_puto_dentro(puto_cardinal *puto, puto_cardinal *segmento_inicio,
-		puto_cardinal *segmento_fin, char ida) {
+		puto_cardinal *segmento_fin) {
 	char result = 0;
 	double angulo = 0;
 	double angulo_puto = 0;
@@ -174,6 +178,7 @@ static void ass_main() {
 
 	scanf("%u\n", &num_casos);
 
+	printf("%u\n", num_casos);
 	for (k = 0; k < num_casos; k++) {
 		natural num_coor = 0;
 		natural cont_coor = 0;
@@ -181,32 +186,33 @@ static void ass_main() {
 		puto_polar max_pol = *MAX_COORD_POLAR;
 		puto_polar *puto_polar_tmp = NULL;
 		natural coord_filtradas_tam = 0;
-		char ida = 1;
+		int shit;
 		scanf("%u\n", &num_coor);
 
+		/*
+		 printf("el min es %d %d\n", min_card->coord_x, min_card->coord_y);
+		 */
 		for (i = 0; i < num_coor; i++) {
 			int coord_x_in = 0;
 			int coord_y_in = 0;
-			char caca = 0;
 
-			scanf("%d %d %c\n", &coord_x_in, &coord_y_in, &caca);
+			scanf("%d %d\n", &coord_x_in, &coord_y_in);
 
-			if (caca == 'Y') {
-				puto_cardinal *cur_puto = coordenadas_cartesianas + cont_coor++;
-				cur_puto->coord_x = coord_x_in;
-				cur_puto->coord_y = coord_y_in;
-				/*
-				 printf("x %d(%x) y %d(%x) x-y %lld (%llx)\n", cur_puto->coord_x,
-				 cur_puto->coord_x, cur_puto->coord_y, cur_puto->coord_y,
-				 cur_puto->coord_xy, cur_puto->coord_xy);
-				 */
-				if ((min_card->coord_x > cur_puto->coord_x)
-						|| (min_card->coord_x == cur_puto->coord_x
-								&& min_card->coord_y > cur_puto->coord_y)) {
-					min_card = cur_puto;
-				}
+			puto_cardinal *cur_puto = coordenadas_cartesianas + cont_coor++;
+			cur_puto->coord_x = coord_x_in;
+			cur_puto->coord_y = coord_y_in;
+			/*
+			 printf("x %d(%x) y %d(%x) x-y %lld (%llx)\n", cur_puto->coord_x,
+			 cur_puto->coord_x, cur_puto->coord_y, cur_puto->coord_y,
+			 cur_puto->coord_xy, cur_puto->coord_xy);
+			 */
+			if ((min_card->coord_y > cur_puto->coord_y)
+					|| (min_card->coord_y == cur_puto->coord_y
+							&& min_card->coord_x > cur_puto->coord_x)) {
+				min_card = cur_puto;
 			}
 		}
+		scanf("%d\n", &shit);
 
 		for (i = 0; i < cont_coor; i++) {
 			puto_cardinal *cur_puto = coordenadas_cartesianas + i;
@@ -294,8 +300,7 @@ static void ass_main() {
 						coordenadas_cartesianas_filtradas[coord_filtradas_tam
 								- 1];
 
-				puto_dentro = ass_puto_dentro(puto, segmento_ini, segmento_fin,
-						ida);
+				puto_dentro = ass_puto_dentro(puto, segmento_ini, segmento_fin);
 
 				if (!puto_dentro) {
 					break;
@@ -312,24 +317,29 @@ static void ass_main() {
 				coordenadas_cartesianas_filtradas[coord_filtradas_tam++] =
 						segmento_fin;
 			}
-
-			if (i >= idx_max_pol) {
-				/*
-				 assert(
-				 segmento_fin
-				 == (coordenadas_polares + idx_max_pol)->cardinal_puto_polar);
-				 printf("no mas eliminacion\n");
-				 */
-				ida = 0;
-			}
 		}
 
-		printf("%u\n", coord_filtradas_tam);
-		for (i = 0; i < coord_filtradas_tam; i++) {
+		char imprimir_doble =
+				coordenadas_cartesianas_filtradas[0]->coord_xy
+						!= coordenadas_cartesianas_filtradas[coord_filtradas_tam
+								- 1]->coord_xy;
+		char idx_inicio = coordenadas_cartesianas_filtradas[0]->coord_xy
+				== coordenadas_cartesianas_filtradas[1]->coord_xy;
+
+		printf("%u\n",
+				coord_filtradas_tam + (imprimir_doble ? 1 : 0)
+						- (idx_inicio ? 1 : 0));
+		for (i = idx_inicio; i < coord_filtradas_tam; i++) {
 			puto_cardinal *cur_puto = coordenadas_cartesianas_filtradas[i];
 			{
 				printf("%d %d\n", cur_puto->coord_x, cur_puto->coord_y);
 			}
+		}
+		if (imprimir_doble) {
+			printf("%d %d\n", min_card->coord_x, min_card->coord_y);
+		}
+		if (k < num_casos - 1) {
+			printf("%d\n", -1);
 		}
 	}
 }
