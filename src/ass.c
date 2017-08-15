@@ -159,7 +159,7 @@ static char ass_puto_dentro(puto_cardinal *puto, puto_cardinal *segmento_inicio,
 	angulo_puto =
 			angulo_puto > (M_PI * 2) ? angulo_puto - (M_PI * 2) : angulo_puto;
 
-	result = !(angulo_puto >= 0.0 && angulo_puto <= M_PI);
+	result = !(angulo_puto > 0.0 && angulo_puto < M_PI);
 	/*
 	 printf(
 	 "el anogulo %f (%d %d - %d %d) y el angulo puto %f (%d %d - %d %d)\n",
@@ -264,7 +264,8 @@ static void ass_main() {
 		coordenadas_cartesianas_filtradas[coord_filtradas_tam] = min_card;
 		coord_filtradas_tam = 1;
 		while (coord_filtradas_tam < 3 && i < cont_coor) {
-			if ((coordenadas_polares + i)->cardinal_puto_polar != min_card) {
+			if ((coordenadas_polares + i)->cardinal_puto_polar->coord_xy
+					!= min_card->coord_xy) {
 				coordenadas_cartesianas_filtradas[coord_filtradas_tam] =
 						(coordenadas_polares + i)->cardinal_puto_polar;
 				/*
@@ -325,13 +326,32 @@ static void ass_main() {
 								- 1]->coord_xy;
 		char idx_inicio = coordenadas_cartesianas_filtradas[0]->coord_xy
 				== coordenadas_cartesianas_filtradas[1]->coord_xy;
+		char hay_mierda = 0;
+		puto_cardinal *puto_ant = coordenadas_cartesianas_filtradas[0];
+		puto_cardinal *puto_sig = coordenadas_cartesianas_filtradas[2];
+
+		hay_mierda = (puto_ant->coord_x == puto_sig->coord_x
+				|| puto_ant->coord_y == puto_sig->coord_y);
 
 		printf("%u\n",
 				coord_filtradas_tam + (imprimir_doble ? 1 : 0)
-						- (idx_inicio ? 1 : 0));
+						- (idx_inicio ? 1 : 0) - (hay_mierda ? 1 : 0));
 		for (i = idx_inicio; i < coord_filtradas_tam; i++) {
 			puto_cardinal *cur_puto = coordenadas_cartesianas_filtradas[i];
-			{
+			char imprimir_caca = 0;
+			if (i == 0 || i == coord_filtradas_tam - 1) {
+				imprimir_caca = 1;
+			} else {
+				puto_cardinal *puto_ant = coordenadas_cartesianas_filtradas[i
+						- 1];
+				puto_cardinal *puto_sig = coordenadas_cartesianas_filtradas[i
+						+ 1];
+
+				imprimir_caca = (!(puto_ant->coord_x == puto_sig->coord_x
+						|| puto_ant->coord_y == puto_sig->coord_y));
+
+			}
+			if (imprimir_caca) {
 				printf("%d %d\n", cur_puto->coord_x, cur_puto->coord_y);
 			}
 		}
