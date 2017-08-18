@@ -213,6 +213,7 @@ static void ass_main() {
 			}
 		}
 		scanf("%d\n", &shit);
+		num_coor--;
 
 		for (i = 0; i < cont_coor; i++) {
 			puto_cardinal *cur_puto = coordenadas_cartesianas + i;
@@ -222,10 +223,10 @@ static void ass_main() {
 			/*
 			 printf("ano %f dist %f\n", cur_puto_pol->anogulo_puto_polar,
 			 cur_puto_pol->distancia_puto_polar);
+			 if (ass_comparar_puto_polar_dist(&max_pol, cur_puto_pol) <= 0) {
+			 max_pol = *cur_puto_pol;
+			 }
 			 */
-			if (ass_comparar_puto_polar_dist(&max_pol, cur_puto_pol) <= 0) {
-				max_pol = *cur_puto_pol;
-			}
 		}
 
 		qsort(coordenadas_polares, cont_coor, sizeof(puto_polar),
@@ -250,7 +251,6 @@ static void ass_main() {
 			qsort(coordenadas_polares + idx_max_pol, cont_coor - idx_max_pol,
 					sizeof(puto_polar), ass_comparar_puto_polar_inv_qsort);
 		}
-
 		/*
 		 printf("el mas lejano %d %d\n",
 		 (coordenadas_polares + idx_max_pol)->cardinal_puto_polar->coord_x,
@@ -320,44 +320,12 @@ static void ass_main() {
 			}
 		}
 
-		char imprimir_doble =
-				coordenadas_cartesianas_filtradas[0]->coord_xy
-						!= coordenadas_cartesianas_filtradas[coord_filtradas_tam
-								- 1]->coord_xy;
-		char idx_inicio = coordenadas_cartesianas_filtradas[0]->coord_xy
-				== coordenadas_cartesianas_filtradas[1]->coord_xy;
-		char hay_mierda = 0;
-		puto_cardinal *puto_ant = coordenadas_cartesianas_filtradas[0];
-		puto_cardinal *puto_sig = coordenadas_cartesianas_filtradas[2];
-
-		hay_mierda = (puto_ant->coord_x == puto_sig->coord_x
-				|| puto_ant->coord_y == puto_sig->coord_y);
-
-		printf("%u\n",
-				coord_filtradas_tam + (imprimir_doble ? 1 : 0)
-						- (idx_inicio ? 1 : 0) - (hay_mierda ? 1 : 0));
-		for (i = idx_inicio; i < coord_filtradas_tam; i++) {
+		printf("%u\n", coord_filtradas_tam + 1);
+		for (i = 0; i < coord_filtradas_tam; i++) {
 			puto_cardinal *cur_puto = coordenadas_cartesianas_filtradas[i];
-			char imprimir_caca = 0;
-			if (i == 0 || i == coord_filtradas_tam - 1) {
-				imprimir_caca = 1;
-			} else {
-				puto_cardinal *puto_ant = coordenadas_cartesianas_filtradas[i
-						- 1];
-				puto_cardinal *puto_sig = coordenadas_cartesianas_filtradas[i
-						+ 1];
-
-				imprimir_caca = (!(puto_ant->coord_x == puto_sig->coord_x
-						|| puto_ant->coord_y == puto_sig->coord_y));
-
-			}
-			if (imprimir_caca) {
-				printf("%d %d\n", cur_puto->coord_x, cur_puto->coord_y);
-			}
+			printf("%d %d\n", cur_puto->coord_x, cur_puto->coord_y);
 		}
-		if (imprimir_doble) {
-			printf("%d %d\n", min_card->coord_x, min_card->coord_y);
-		}
+		printf("%d %d\n", min_card->coord_x, min_card->coord_y);
 		if (k < num_casos - 1) {
 			printf("%d\n", -1);
 		}
