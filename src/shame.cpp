@@ -24,15 +24,20 @@ void ConvexHull(int N, Point P[]) {
 	qsort(P, N, sizeof(Point), cmp);
 	int i, m = 0, t;
 	for (i = 0; i < N; i++) {
-		printf("puta mierda %d %d\n", P[i].x, P[i].y);
+//		printf("puta mierda %d %d\n", P[i].x, P[i].y);
 		while (m >= 2 && Cross(&CH[m - 2], &CH[m - 1], &P[i]) <= 0)
 			m--;
 		CH[m++] = P[i];
 	}
+	for (int j = 0; j < m; j++) {
+//		printf("caca %d %d\n", CH[j].x, CH[j].y);
+	}
 	for (i = N - 1, t = m + 1; i >= 0; i--) {
-		printf("concha de la lora %d %d\n", P[i].x, P[i].y);
-		while (m >= t && Cross(&CH[m - 2], &CH[m - 1], &P[i]) <= 0)
+//		printf("concha de la lora %d %d\n", P[i].x, P[i].y);
+		while (m >= t && Cross(&CH[m - 2], &CH[m - 1], &P[i]) <= 0) {
+//			printf("borrado %d %d\n", CH[m - 1].x, CH[m - 1].y);
 			m--;
+		}
 		CH[m++] = P[i];
 	}
 	printf("%d\n", m);

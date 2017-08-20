@@ -2,3 +2,5 @@
 /caca.dSYM
 /shame.dSYM
 shit*
+*.c.log
+*.shame.log
