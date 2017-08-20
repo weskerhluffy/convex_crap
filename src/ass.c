@@ -301,7 +301,7 @@ static void ass_main() {
 			 */
 		}
 
-		for (; cont_coor > 2 && i <= cont_coor; i++) {
+		for (; cont_coor > 1 && i <= cont_coor; i++) {
 			puto_cardinal *segmento_fin = NULL;
 
 			segmento_fin = (coordenadas_polares + i)->cardinal_puto_polar;
